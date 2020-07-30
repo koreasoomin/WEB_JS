@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+</head>
+<body>
+	name : <input type="text" id="name">
+	value : <input type="text" id="value">
+	<input type="button" value="add cookie" onclick="AddCookie()">
+	<input type="button" value="del cookie" onclick="DelCookie()">
+	<div id="cookie_list" style="border: 1px solid #000000; padding: 10px; margin-top: 10px;">
+	</div>
+
+	<script>
+		/** 쿠키를 추가하거나 삭제한다.
+		 *
+		 * @param strName 쿠키 이름
+		 * @param strValue 쿠키 값
+		 * @param iSecond null 을 입력하면 일시적인 쿠키를 생성한다. 0 보다 큰 값을 입력하면 쿠키 지속 시간을 포함한 쿠키를 생성한다. 0 을 입력하면 쿠키를 삭제한다.
+		 */
+		function SetCookie( strName, strValue, iSecond )
+		{
+			var strCookie = strName + "=" + encodeURIComponent(strValue);
+			if( typeof iSecond === "number" )
+			{
+				strCookie += "; max-age=" + iSecond;
+			}
+
+			// QQQ: path, domain 유효범위를 설정하고 싶으면 여기서 strCookie 변수에 추가해 주어야 한다.
+
+			document.cookie = strCookie;
+		}
+
+		/** 쿠키를 추가한다. */
+		function AddCookie()
+		{
+			var strName = document.getElementById("name" ).value;
+			var strValue = document.getElementById("value" ).value;
+			SetCookie( strName, strValue, null );
+			ShowCookie();
+		}
+
+		/** 쿠키를 삭제한다. */
+		function DelCookie()
+		{
+			var strName = document.getElementById("name" ).value;
+			var strValue = document.getElementById("value" ).value;
+			SetCookie( strName, strValue, 0 );
+			ShowCookie();
+		}
+
+		/** 설정된 쿠키 이름, 값을 화면에 보여준다. */
+		function ShowCookie()
+		{
+			var divCookie = document.getElementById("cookie_list");
+
+			if( document.cookie == null || document.cookie == "" )
+			{
+				divCookie.innerHTML = "";
+				return;
+			}
+
+			var listCookie = document.cookie.split( "; " );
+			var strCookie = "";
+
+			for( var i = 0; i < listCookie.length; ++i )
+			{
+				var iPos = listCookie[i].indexOf("=");
+				var strName = listCookie[i].substring(0,iPos);
+				var strValue = listCookie[i].substring(iPos+1);
+				strValue = decodeURIComponent( strValue );
+				strCookie += strName + "=" + strValue + "<br>\n";
+			}
+
+			divCookie.innerHTML = strCookie;
+		}
+
+		ShowCookie();
+	</script>
+</body>
+</html>
